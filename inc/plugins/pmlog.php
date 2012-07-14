@@ -98,11 +98,6 @@ function pmlog_admin_adminlog($plugin_array)
   	global $lang;
 	$lang->load("tools_pmlog");
 
-	if($plugin_array['logitem']['action'] == 'tools_pmlog')
-	{
-		$plugin_array['lang_string'] = admin_log_tools_pmlog_view;
-	}
-
 	return $plugin_array;
 }
 

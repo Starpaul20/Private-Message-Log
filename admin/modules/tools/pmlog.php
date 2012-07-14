@@ -285,8 +285,8 @@ if(!$mybb->input['action'])
 		<script type="text/javascript" src="../jscripts/autocomplete.js?ver=140"></script>
 		<script type="text/javascript">
 		<!--
-			new autoComplete("to_username", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
-			new autoComplete("from_username", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
+			new autoComplete("toname", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
+			new autoComplete("fromname", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
 		// -->
 	</script>';
 
