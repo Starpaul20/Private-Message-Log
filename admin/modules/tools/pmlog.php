@@ -19,7 +19,7 @@ if($mybb->input['action'] == "view")
 		FROM ".TABLE_PREFIX."privatemessages p
 		LEFT JOIN ".TABLE_PREFIX."users r ON (r.uid=p.toid)
 		LEFT JOIN ".TABLE_PREFIX."users f ON (f.uid=p.fromid)
-		WHERE pmid='".intval($mybb->input['pmid'])."'
+		WHERE p.pmid='".intval($mybb->input['pmid'])."'
 	");
 	$log = $db->fetch_array($query);
 
