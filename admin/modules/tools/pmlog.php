@@ -28,11 +28,24 @@ if($mybb->input['action'] == "view")
 		exit;
 	}
 
+	require_once MYBB_ROOT."inc/class_parser.php";
+	$parser = new postParser;
+
 	$log['to_username'] = htmlspecialchars_uni($log['to_username']);
 	$log['from_username'] = htmlspecialchars_uni($log['from_username']);
 	$log['subject'] = htmlspecialchars_uni($log['subject']);
-	$log['message'] = htmlspecialchars_uni($log['message']);
 	$log['dateline'] = date($mybb->settings['dateformat'], $log['dateline']).", ".date($mybb->settings['timeformat'], $log['dateline']);
+
+	// Parse PM text
+	$parser_options = array(
+		"allow_html" => $mybb->settings['pmsallowhtml'],
+		"allow_mycode" => $mybb->settings['pmsallowmycode'],
+		"allow_smilies" => $mybb->settings['pmsallowsmilies'],
+		"allow_imgcode" => $mybb->settings['pmsallowimgcode'],
+		"allow_videocode" => $mybb->settings['pmsallowvideocode'],
+		"nl2br" => 1
+	);
+	$log['message'] = $parser->parse_message($log['message'], $parser_options);
 
 	// Log admin action
 	log_admin_action($log['pmid'], $log['from_username'], $log['fromid']);
@@ -43,6 +56,55 @@ if($mybb->input['action'] == "view")
 	<title><?php echo $lang->private_message_log_viewer; ?></title>
 	<link rel="stylesheet" href="styles/<?php echo $page->style; ?>/main.css" type="text/css" />
 	<link rel="stylesheet" href="styles/<?php echo $page->style; ?>/popup.css" type="text/css" />
+	<style type="text/css">
+blockquote {
+	border: 1px solid #ccc;
+	margin: 0;
+	background: #fff;
+	padding: 4px;
+}
+
+blockquote cite {
+	font-weight: bold;
+	border-bottom: 1px solid #ccc;
+	font-style: normal;
+	display: block;
+	margin: 4px 0;
+}
+
+blockquote cite span {
+	float: right;
+	font-weight: normal;
+}
+
+blockquote cite span.highlight {
+	float: none;
+	font-weight: bold;
+	padding-bottom: 0;
+}
+
+.codeblock {
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 4px;
+}
+
+.codeblock .title {
+	border-bottom: 1px solid #ccc;
+	font-weight: bold;
+	margin: 4px 0;
+}
+
+.codeblock code {
+	overflow: auto;
+	height: auto;
+	max-height: 200px;
+	display: block;
+	font-family: Monaco, Consolas, Courier, monospace;
+	font-size: 13px;
+}
+	</style>
+	<base href="<?php echo $mybb->settings['bburl'] ?>/" />
 </head>
 <body id="popup">
 	<div id="popup_container">
@@ -222,7 +284,7 @@ if(!$mybb->input['action'])
 		}
 
 		$table->construct_cell("<img src=\"../images/{$folder}\" alt=\"{$msg_alt}\" title=\"{$msg_alt}\" />", array("width" => 1));
-		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', 'log_entry', 450, 450);\">{$log['subject']}</a>");
+		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', 'log_entry', 500, 500);\">{$log['subject']}</a>");
 		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.gif\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
 		if(!$log['from_username'])
 		{
