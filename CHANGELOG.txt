@@ -1,0 +1,7 @@
+1.1
+- Added post parsing when viewing a PM
+- Bug: Fixed spelling error with username auto-completion
+- Bug: Fixed SQL bug
+
+1.0
+- Initial release
