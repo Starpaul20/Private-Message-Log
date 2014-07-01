@@ -185,10 +185,11 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['fromid'])
 	{
-		$query = $db->simple_select("users", "uid, username", "uid='".intval($mybb->input['fromid'])."'");
+		$fromid = intval($mybb->input['fromid']);
+		$query = $db->simple_select("users", "uid, username", "uid='{$fromid}'");
 		$user = $db->fetch_array($query);
-		$additional_sql_criteria .= " AND p.fromid='".intval($mybb->input['fromid'])."'";
-		$additional_criteria[] = "fromid='".intval($mybb->input['fromid'])."'";
+		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
+		$additional_criteria[] = "fromid={$fromid}";
 	}
 	else if($mybb->input['fromname'])
 	{
@@ -206,10 +207,11 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['toid'])
 	{
-		$query = $db->simple_select("users", "uid, username", "uid='".intval($mybb->input['toid'])."'");
+		$toid = intval($mybb->input['toid']);
+		$query = $db->simple_select("users", "uid, username", "uid='{$toid}'");
 		$user = $db->fetch_array($query);
-		$additional_sql_criteria .= " AND p.toid='".intval($mybb->input['toid'])."'";
-		$additional_criteria[] = "toid='".intval($mybb->input['toid'])."'";
+		$additional_sql_criteria .= " AND p.toid='{$toid}'";
+		$additional_criteria[] = "toid={$toid}";
 	}
 	else if($mybb->input['toname'])
 	{
