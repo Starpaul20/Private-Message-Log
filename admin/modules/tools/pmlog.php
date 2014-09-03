@@ -36,6 +36,15 @@ if($mybb->input['action'] == "view")
 	$log['subject'] = htmlspecialchars_uni($log['subject']);
 	$log['dateline'] = date($mybb->settings['dateformat'], $log['dateline']).", ".date($mybb->settings['timeformat'], $log['dateline']);
 
+	if(empty($log['ipaddress']))
+	{
+		$ipaddress = $lang->na;
+	}
+	else
+	{
+		$ipaddress = my_inet_ntop($db->unescape_binary($log['ipaddress']));
+	}
+
 	// Parse PM text
 	$parser_options = array(
 		"allow_html" => $mybb->settings['pmsallowhtml'],
@@ -129,6 +138,10 @@ blockquote cite span.highlight {
 
 	$table->construct_cell($lang->date.":");
 	$table->construct_cell($log['dateline']);
+	$table->construct_row();
+
+	$table->construct_cell($lang->ip_address.":");
+	$table->construct_cell($ipaddress);
 	$table->construct_row();
 
 	$table->construct_cell($log['message'], array("colspan" => 2));
@@ -247,6 +260,7 @@ if(!$mybb->input['action'])
 	$table->construct_header($lang->from, array("class" => "align_center", "width" => "20%"));
 	$table->construct_header($lang->to, array("class" => "align_center", "width" => "20%"));
 	$table->construct_header($lang->date_sent, array("class" => "align_center", "width" => "20%"));
+	$table->construct_header($lang->ip_address, array("class" => "align_center", 'width' => '10%'));
 
 	$query = $db->query("
 		SELECT p.*, r.username AS to_username, r.usergroup AS to_usergroup, r.displaygroup AS to_displaygroup, f.username AS from_username, f.usergroup AS from_usergroup, f.displaygroup AS from_displaygroup
@@ -307,13 +321,25 @@ if(!$mybb->input['action'])
 			$to_username = format_name($log['to_username'], $log['to_usergroup'], $log['to_displaygroup']);
 			$table->construct_cell("{$find_to}<div><a href=\"../".get_profile_link($log['toid'])."\">{$to_username}</a></div>");
 		}
+
 		$table->construct_cell($log['dateline'], array("class" => "align_center"));
+
+		if(empty($log['ipaddress']))
+		{
+			$ipaddress = $lang->na;
+		}
+		else
+		{
+			$ipaddress = my_inet_ntop($db->unescape_binary($log['ipaddress']));
+		}
+
+		$table->construct_cell($ipaddress, array("class" => "align_center"));
 		$table->construct_row();
 	}
-	
+
 	if($table->num_rows() == 0)
 	{
-		$table->construct_cell($lang->no_logs, array("colspan" => "5"));
+		$table->construct_cell($lang->no_logs, array("colspan" => "6"));
 		$table->construct_row();
 		$table->output($lang->private_message_log);
 	}

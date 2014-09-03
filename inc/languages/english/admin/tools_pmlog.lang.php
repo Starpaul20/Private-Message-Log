@@ -19,6 +19,7 @@ $l['subject'] = "Subject";
 $l['from'] = "From";
 $l['to'] = "To";
 $l['date_sent'] = "Date Sent";
+$l['ip_address'] = "IP Address";
 
 $l['find_pms_by_user'] = "Find all private messages sent by this user";
 $l['find_pms_to_user'] = "Find all private messages sent to this user";
