@@ -1,6 +1,6 @@
 ## INFORMATION ##
 
-Private Message Log (1.1) for MyBB 1.6
+Private Message Log (1.0) for MyBB 1.8
 Created by: Starpaul20
 Copyright: ©2012
 License: GPL
@@ -10,6 +10,8 @@ Allows Administrators to view Private Messages sent on their board.
 When activated, a notice is added to the PM compose page warning users that PMs are being logged. Also, whenever an Admin views a PM entry, it is logged in the Admin Log.
 
 This plugin offers full language support.
+
+The 'oldrelease' branch contains the 1.6 version of the plugin.
 
 
 ## INSTALLATION ##
