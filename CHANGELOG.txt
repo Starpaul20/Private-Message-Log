@@ -1,12 +1,13 @@
-1.0
+1.0 (September 3rd, 2014)
 - Updated plugin to work with MyBB 1.8
+- Added IP address to log
 
 ## Version number reset for MyBB 1.8 ##
 
-1.1
+1.1 (April 5th, 2013)
 - Added post parsing when viewing a PM
 - Bug: Fixed spelling error with username auto-completion
 - Bug: Fixed SQL bug
 
-1.0
+1.0 (March 31st, 2012)
 - Initial release
