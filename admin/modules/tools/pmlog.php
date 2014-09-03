@@ -266,28 +266,28 @@ if(!$mybb->input['action'])
 		// Determine Folder Icon
 		if($log['status'] == 0)
 		{
-			$folder = 'new_pm.gif';
+			$folder = 'new_pm.png';
 			$msg_alt = $lang->new_pm;
 		}
 		elseif($log['status'] == 1)
 		{
-			$folder = 'old_pm.gif';
+			$folder = 'old_pm.png';
 			$msg_alt = $lang->old_pm;
 		}
 		elseif($log['status'] == 3)
 		{
-			$folder = 're_pm.gif';
+			$folder = 're_pm.png';
 			$msg_alt = $lang->reply_pm;
 		}
 		elseif($log['status'] == 4)
 		{
-			$folder = 'fw_pm.gif';
+			$folder = 'fw_pm.png';
 			$msg_alt = $lang->fwd_pm;
 		}
 
 		$table->construct_cell("<img src=\"../images/{$folder}\" alt=\"{$msg_alt}\" title=\"{$msg_alt}\" />", array("width" => 1));
 		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', 'log_entry', 500, 500);\">{$log['subject']}</a>");
-		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.gif\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
+		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
 		if(!$log['from_username'])
 		{
 			$table->construct_cell("{$find_from}<div>{$lang->deleted_user}</div>");
@@ -297,7 +297,7 @@ if(!$mybb->input['action'])
 			$from_username = format_name($log['from_username'], $log['from_usergroup'], $log['from_displaygroup']);
 			$table->construct_cell("{$find_from}<div><a href=\"../".get_profile_link($log['fromid'])."\">{$from_username}</a></div>");
 		}
-		$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.gif\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
+		$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
 		if(!$log['to_username'])
 		{
 			$table->construct_cell("{$find_to}<div>{$lang->deleted_user}</div>");
