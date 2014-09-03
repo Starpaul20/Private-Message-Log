@@ -4,6 +4,9 @@
  * Copyright 2012 Starpaul20
  */
 
+$l['pmlog_info_name'] = "Private Message Log";
+$l['pmlog_info_desc'] = "Allows Administrators to view Private Messages sent on their board.";
+
 $l['can_manage_pm_logs'] = "Can manage private message logs?";
 $l['private_message_logging'] = "Any messages sent through this form will be logged and viewable to board administrators. Do not include any private information, financial information, or passwords in any messages sent.";
 

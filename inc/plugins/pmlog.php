@@ -21,9 +21,12 @@ $plugins->add_hook("admin_tools_get_admin_log_action", "pmlog_admin_adminlog");
 // The information that shows up on the plugin manager
 function pmlog_info()
 {
+	global $lang;
+	$lang->load("tools_pmlog");
+
 	return array(
-		"name"				=> "Private Message Log",
-		"description"		=> "Allows Administrators to view Private Messages sent on their board.",
+		"name"				=> $lang->pmlog_info_name,
+		"description"		=> $lang->pmlog_info_desc,
 		"website"			=> "http://galaxiesrealm.com/index.php",
 		"author"			=> "Starpaul20",
 		"authorsite"		=> "http://galaxiesrealm.com/index.php",
