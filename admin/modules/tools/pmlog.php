@@ -50,18 +50,18 @@ if($mybb->input['action'] == "view")
 	// Log admin action
 	log_admin_action($log['pmid'], $log['from_username'], $log['fromid']);
 
-	?>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head profile="http://gmpg.org/xfn/1">
-	<title><?php echo $lang->private_message_log_viewer; ?></title>
-	<link rel="stylesheet" href="styles/<?php echo $page->style; ?>/main.css" type="text/css" />
-	<link rel="stylesheet" href="styles/<?php echo $page->style; ?>/popup.css" type="text/css" />
+?>
+	<div class="modal">
+	<div style="overflow-y: auto; max-height: 400px;">
 	<style type="text/css">
 blockquote {
 	border: 1px solid #ccc;
 	margin: 0;
 	background: #fff;
-	padding: 4px;
+	padding: 10px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
 }
 
 blockquote cite {
@@ -69,12 +69,15 @@ blockquote cite {
 	border-bottom: 1px solid #ccc;
 	font-style: normal;
 	display: block;
-	margin: 4px 0;
+	padding-bottom: 3px;
+	margin: 0 0 10px 0;
 }
 
 blockquote cite span {
 	float: right;
 	font-weight: normal;
+	font-size: 12px;
+	color: #666;
 }
 
 blockquote cite span.highlight {
@@ -86,13 +89,17 @@ blockquote cite span.highlight {
 .codeblock {
 	background: #fff;
 	border: 1px solid #ccc;
-	padding: 4px;
+	padding: 10px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
 }
 
 .codeblock .title {
 	border-bottom: 1px solid #ccc;
 	font-weight: bold;
-	margin: 4px 0;
+	padding-bottom: 3px;
+	margin: 0 0 10px 0;
 }
 
 .codeblock code {
@@ -105,12 +112,6 @@ blockquote cite span.highlight {
 }
 	</style>
 	<base href="<?php echo $mybb->settings['bburl'] ?>/" />
-</head>
-<body id="popup">
-	<div id="popup_container">
-	<div class="popup_title"><a href="#" onClick="window.close();" class="close_link"><?php echo $lang->close_window; ?></a><?php echo $lang->private_message_log_viewer; ?></div>
-
-	<div id="content">
 	<?php
 	$table = new Table();
 
@@ -133,14 +134,13 @@ blockquote cite span.highlight {
 	$table->construct_cell($log['message'], array("colspan" => 2));
 	$table->construct_row();
 
-	$table->output($lang->private_message);
+	$table->output($lang->private_message_log_viewer);
 
 	?>
 	</div>
-</div>
-</body>
-</html>
+	</div>
 	<?php
+exit;
 }
 
 if(!$mybb->input['action'])
@@ -286,7 +286,7 @@ if(!$mybb->input['action'])
 		}
 
 		$table->construct_cell("<img src=\"../images/{$folder}\" alt=\"{$msg_alt}\" title=\"{$msg_alt}\" />", array("width" => 1));
-		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', 'log_entry', 500, 500);\">{$log['subject']}</a>");
+		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', null, true);\">{$log['subject']}</a>");
 		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
 		if(!$log['from_username'])
 		{
