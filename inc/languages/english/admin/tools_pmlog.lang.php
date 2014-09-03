@@ -7,11 +7,16 @@
 $l['pmlog_info_name'] = "Private Message Log";
 $l['pmlog_info_desc'] = "Allows Administrators to view Private Messages sent on their board.";
 
-$l['can_manage_pm_logs'] = "Can manage private message logs?";
+// Front end logging warning
 $l['private_message_logging'] = "Any messages sent through this form will be logged and viewable to board administrators. Do not include any private information, financial information, or passwords in any messages sent.";
 
+// Admin Log logging
 $l['admin_log_tools_pmlog_view'] = "Viewed PM #{1} sent by User #{3} ({2})";
 
+// Admin Permissions
+$l['can_manage_pm_logs'] = "Can manage private message logs?";
+
+// PM Log
 $l['private_message_log'] = "Private Message Log";
 $l['private_message_log_desc'] = "Here you can view and search private messages sent.";
 
@@ -24,7 +29,7 @@ $l['ip_address'] = "IP Address";
 $l['find_pms_by_user'] = "Find all private messages sent by this user";
 $l['find_pms_to_user'] = "Find all private messages sent to this user";
 $l['find'] = "Find";
-$l['deleted_user'] = "";
+$l['deleted_user'] = "Deleted User";
 $l['new_pm'] = "New PM";
 $l['old_pm'] = "Old PM";
 $l['reply_pm'] = "Replied PM";
