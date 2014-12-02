@@ -30,7 +30,7 @@ function pmlog_info()
 		"website"			=> "http://galaxiesrealm.com/index.php",
 		"author"			=> "Starpaul20",
 		"authorsite"		=> "http://galaxiesrealm.com/index.php",
-		"version"			=> "1.0",
+		"version"			=> "1.0.1",
 		"compatibility"		=> "18*"
 	);
 }
@@ -86,7 +86,7 @@ function pmlog_admin_action_handler($actions)
 
 function pmlog_admin_permissions($admin_permissions)
 {
-  	global $db, $mybb, $lang;
+	global $db, $mybb, $lang;
 	$lang->load("tools_pmlog");
 
 	$admin_permissions['pmlog'] = $lang->can_manage_pm_logs;

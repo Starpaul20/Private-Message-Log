@@ -1,6 +1,6 @@
 ## INFORMATION ##
 
-Private Message Log (1.0) for MyBB 1.8
+Private Message Log (1.0.1) for MyBB 1.8
 Created by: Starpaul20
 Copyright: ©2012
 License: GPL
