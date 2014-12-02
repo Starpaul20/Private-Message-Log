@@ -173,6 +173,10 @@ if(!$mybb->input['action'])
 
 	$additional_criteria = array();
 
+	$toname = $db->escape_string($mybb->input['toname']);
+
+	$fromname = $db->escape_string($mybb->input['fromname']);
+
 	// Begin criteria filtering
 	if(!$mybb->input['folder'])
 	{
@@ -206,7 +210,7 @@ if(!$mybb->input['action'])
 	}
 	else if($mybb->input['fromname'])
 	{
-		$query = $db->simple_select("users", "uid, username", "LOWER(username)='".my_strtolower($mybb->input['fromname'])."'");
+		$query = $db->simple_select("users", "uid, username", "LOWER(username) = '{$fromname}'");
 		$user = $db->fetch_array($query);
 
 		if(!$user['uid'])
@@ -228,7 +232,7 @@ if(!$mybb->input['action'])
 	}
 	else if($mybb->input['toname'])
 	{
-		$query = $db->simple_select("users", "uid, username", "LOWER(username)='".my_strtolower($mybb->input['toname'])."'");
+		$query = $db->simple_select("users", "uid, username", "LOWER(username) = '{$toname}'");
 		$user = $db->fetch_array($query);
 
 		if(!$user['uid'])
