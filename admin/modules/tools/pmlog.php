@@ -19,7 +19,7 @@ if($mybb->input['action'] == "view")
 		FROM ".TABLE_PREFIX."privatemessages p
 		LEFT JOIN ".TABLE_PREFIX."users r ON (r.uid=p.toid)
 		LEFT JOIN ".TABLE_PREFIX."users f ON (f.uid=p.fromid)
-		WHERE p.pmid='".intval($mybb->input['pmid'])."'
+		WHERE p.pmid='".$mybb->get_input('pmid', 1)."'
 	");
 	$log = $db->fetch_array($query);
 
@@ -162,7 +162,7 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['page'] && $mybb->input['page'] > 1)
 	{
-		$mybb->input['page'] = intval($mybb->input['page']);
+		$mybb->input['page'] = $mybb->get_input('page', 1);
 		$start = ($mybb->input['page']*$per_page)-$per_page;
 	}
 	else
@@ -173,8 +173,10 @@ if(!$mybb->input['action'])
 
 	$additional_criteria = array();
 
+	$toid = (int)$mybb->input['toid'];
 	$toname = $db->escape_string($mybb->input['toname']);
 
+	$fromid = (int)$mybb->input['fromid'];
 	$fromname = $db->escape_string($mybb->input['fromname']);
 
 	// Begin criteria filtering
@@ -190,8 +192,8 @@ if(!$mybb->input['action'])
 	}
 	else
 	{
-		$additional_sql_criteria .= " AND p.folder = '".intval($mybb->input['folder'])."'";
-		$additional_criteria[] = "folder=".intval($mybb->input['folder']);
+		$additional_sql_criteria .= " AND p.folder = '".(int)$mybb->input['folder']."'";
+		$additional_criteria[] = "folder=".(int)$mybb->input['folder'];
 	}
 
 	if($mybb->input['subject'])
@@ -202,7 +204,6 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['fromid'])
 	{
-		$fromid = intval($mybb->input['fromid']);
 		$query = $db->simple_select("users", "uid, username", "uid='{$fromid}'");
 		$user = $db->fetch_array($query);
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
@@ -224,7 +225,6 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['toid'])
 	{
-		$toid = intval($mybb->input['toid']);
 		$query = $db->simple_select("users", "uid, username", "uid='{$toid}'");
 		$user = $db->fetch_array($query);
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
