@@ -179,6 +179,8 @@ if(!$mybb->input['action'])
 	$fromid = (int)$mybb->input['fromid'];
 	$fromname = $db->escape_string($mybb->input['fromname']);
 
+	$subject = $db->escape_string_like($mybb->input['subject']);
+
 	// Begin criteria filtering
 	if(!$mybb->input['folder'])
 	{
@@ -198,8 +200,8 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['subject'])
 	{
-		$additional_sql_criteria .= " AND p.subject LIKE '%".$db->escape_string($mybb->input['subject'])."%'";
-		$additional_criteria[] = "subject='".htmlspecialchars_uni($mybb->input['subject'])."'";
+		$additional_sql_criteria .= " AND p.subject LIKE '%{$subject}%'";
+		$additional_criteria[] = "subject=".urlencode($mybb->input['subject']);
 	}
 
 	if($mybb->input['fromid'])
