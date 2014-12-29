@@ -1,7 +1,7 @@
 1.0.1 (December 2nd, 2014)
 - Fixed SQLi vulnerability
 - Bug: Fixed PM subject multipage issue (Issue #2)
-- Typecast converion
+- Typecast conversion
 
 1.0 (September 3rd, 2014)
 - Updated plugin to work with MyBB 1.8
