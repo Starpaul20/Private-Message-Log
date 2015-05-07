@@ -1,3 +1,9 @@
+1.1 (May 7th, 2015)
+- Use get_user_by_username function
+- Changed (int)$mybb->input to $mybb->get_input
+- Use threadsperpage setting for log paging
+- Updated username autocompletion to use select2
+
 1.0.1 (December 2nd, 2014)
 - Fixed SQLi vulnerability
 - Bug: Fixed PM subject multipage issue (Issue #2)
