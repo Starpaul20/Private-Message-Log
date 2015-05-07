@@ -158,7 +158,17 @@ exit;
 
 if(!$mybb->input['action'])
 {	
-	$per_page = 20;
+	if(!$mybb->settings['threadsperpage'] || (int)$mybb->settings['threadsperpage'] < 1)
+	{
+		$mybb->settings['threadsperpage'] = 20;
+	}
+
+	$per_page = $mybb->settings['threadsperpage'];
+
+	if(!$per_page)
+	{
+		$per_page = 20;
+	}
 
 	if($mybb->input['page'] && $mybb->input['page'] > 1)
 	{
