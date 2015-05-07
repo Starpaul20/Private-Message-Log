@@ -174,10 +174,8 @@ if(!$mybb->input['action'])
 	$additional_criteria = array();
 
 	$toid = (int)$mybb->input['toid'];
-	$toname = $db->escape_string($mybb->input['toname']);
 
 	$fromid = (int)$mybb->input['fromid'];
-	$fromname = $db->escape_string($mybb->input['fromname']);
 
 	$subject = $db->escape_string_like($mybb->input['subject']);
 
@@ -213,8 +211,7 @@ if(!$mybb->input['action'])
 	}
 	else if($mybb->input['fromname'])
 	{
-		$query = $db->simple_select("users", "uid, username", "LOWER(username) = '{$fromname}'");
-		$user = $db->fetch_array($query);
+		$user = get_user_by_username($mybb->input['fromname'], array('fields' => 'uid, username'));
 
 		if(!$user['uid'])
 		{
@@ -234,8 +231,7 @@ if(!$mybb->input['action'])
 	}
 	else if($mybb->input['toname'])
 	{
-		$query = $db->simple_select("users", "uid, username", "LOWER(username) = '{$toname}'");
-		$user = $db->fetch_array($query);
+		$user = get_user_by_username($mybb->input['toname'], array('fields' => 'uid, username'));
 
 		if(!$user['uid'])
 		{
