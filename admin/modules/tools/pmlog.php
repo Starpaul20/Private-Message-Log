@@ -19,7 +19,7 @@ if($mybb->input['action'] == "view")
 		FROM ".TABLE_PREFIX."privatemessages p
 		LEFT JOIN ".TABLE_PREFIX."users r ON (r.uid=p.toid)
 		LEFT JOIN ".TABLE_PREFIX."users f ON (f.uid=p.fromid)
-		WHERE p.pmid='".$mybb->get_input('pmid', 1)."'
+		WHERE p.pmid='".$mybb->get_input('pmid', MyBB::INPUT_INT)."'
 	");
 	$log = $db->fetch_array($query);
 
@@ -162,7 +162,7 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['page'] && $mybb->input['page'] > 1)
 	{
-		$mybb->input['page'] = $mybb->get_input('page', 1);
+		$mybb->input['page'] = $mybb->get_input('page', MyBB::INPUT_INT);
 		$start = ($mybb->input['page']*$per_page)-$per_page;
 	}
 	else
@@ -173,27 +173,29 @@ if(!$mybb->input['action'])
 
 	$additional_criteria = array();
 
-	$toid = (int)$mybb->input['toid'];
+	$toid = $mybb->get_input('toid', MyBB::INPUT_INT);
 
-	$fromid = (int)$mybb->input['fromid'];
+	$fromid = $mybb->get_input('fromid', MyBB::INPUT_INT);
 
 	$subject = $db->escape_string_like($mybb->input['subject']);
 
+	$folder = $mybb->get_input('folder', MyBB::INPUT_INT);
+
 	// Begin criteria filtering
-	if(!$mybb->input['folder'])
+	if(!$folder)
 	{
-		$mybb->input['folder'] = 1;
+		$folder = 1;
 	}
 
-	if($mybb->input['folder'] == 5)
+	if($folder == 5)
 	{
 		$additional_sql_criteria .= " AND p.folder > 4";
 		$additional_criteria[] = "folder > 4";
 	}
 	else
 	{
-		$additional_sql_criteria .= " AND p.folder = '".(int)$mybb->input['folder']."'";
-		$additional_criteria[] = "folder=".(int)$mybb->input['folder'];
+		$additional_sql_criteria .= " AND p.folder = '{$folder}'";
+		$additional_criteria[] = "folder={$folder}";
 	}
 
 	if($mybb->input['subject'])
