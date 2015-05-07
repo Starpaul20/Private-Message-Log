@@ -385,13 +385,72 @@ if(!$mybb->input['action'])
 	$form_container->end();
 
 	// Autocompletion for usernames
-		echo '
-		<script type="text/javascript" src="../jscripts/autocomplete.js?ver=140"></script>
-		<script type="text/javascript">
-		<!--
-			new autoComplete("toname", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
-			new autoComplete("fromname", "../xmlhttp.php?action=get_users", {valueSpan: "username"});
-		// -->
+	echo '
+	<link rel="stylesheet" href="../jscripts/select2/select2.css">
+	<script type="text/javascript" src="../jscripts/select2/select2.min.js?ver=1804"></script>
+	<script type="text/javascript">
+	<!--
+	$("#fromname").select2({
+		placeholder: "'.$lang->search_for_a_user.'",
+		minimumInputLength: 3,
+		maximumSelectionSize: 3,
+		multiple: false,
+		ajax: { // instead of writing the function to execute the request we use Select2\'s convenient helper
+			url: "../xmlhttp.php?action=get_users",
+			dataType: \'json\',
+			data: function (term, page) {
+				return {
+					query: term // search term
+				};
+			},
+			results: function (data, page) { // parse the results into the format expected by Select2.
+				// since we are using custom formatting functions we do not need to alter remote JSON data
+				return {results: data};
+			}
+		},
+		initSelection: function(element, callback) {
+			var query = $(element).val();
+			if (query !== "") {
+				$.ajax("../xmlhttp.php?action=get_users&getone=1", {
+					data: {
+						query: query
+					},
+					dataType: "json"
+				}).done(function(data) { callback(data); });
+			}
+		}
+	});
+	$("#toname").select2({
+		placeholder: "'.$lang->search_for_a_user.'",
+		minimumInputLength: 3,
+		maximumSelectionSize: 3,
+		multiple: false,
+		ajax: { // instead of writing the function to execute the request we use Select2\'s convenient helper
+			url: "../xmlhttp.php?action=get_users",
+			dataType: \'json\',
+			data: function (term, page) {
+				return {
+					query: term // search term
+				};
+			},
+			results: function (data, page) { // parse the results into the format expected by Select2.
+				// since we are using custom formatting functions we do not need to alter remote JSON data
+				return {results: data};
+			}
+		},
+		initSelection: function(element, callback) {
+			var query = $(element).val();
+			if (query !== "") {
+				$.ajax("../xmlhttp.php?action=get_users&getone=1", {
+					data: {
+						query: query
+					},
+					dataType: "json"
+				}).done(function(data) { callback(data); });
+			}
+		}
+	});
+	// -->
 	</script>';
 
 	$buttons[] = $form->generate_submit_button($lang->filter_private_message_log);
