@@ -57,4 +57,6 @@ $l['subject'] = "Subject";
 $l['date'] = "Date";
 $l['private_message'] = "Private Message";
 
+$l['search_for_a_user'] = "Search for a user"; // Needed to matain compatibility with pre-1.8.5 versions of MyBB
+
 ?>
