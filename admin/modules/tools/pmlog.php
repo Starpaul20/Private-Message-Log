@@ -322,7 +322,7 @@ if(!$mybb->input['action'])
 		}
 		else
 		{
-			$from_username = format_name($log['from_username'], $log['from_usergroup'], $log['from_displaygroup']);
+			$from_username = format_name(htmlspecialchars_uni($log['from_username']), $log['from_usergroup'], $log['from_displaygroup']);
 			$table->construct_cell("{$find_from}<div><a href=\"../".get_profile_link($log['fromid'])."\">{$from_username}</a></div>");
 		}
 		$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
@@ -332,7 +332,7 @@ if(!$mybb->input['action'])
 		}
 		else
 		{
-			$to_username = format_name($log['to_username'], $log['to_usergroup'], $log['to_displaygroup']);
+			$to_username = format_name(htmlspecialchars_uni($log['to_username']), $log['to_usergroup'], $log['to_displaygroup']);
 			$table->construct_cell("{$find_to}<div><a href=\"../".get_profile_link($log['toid'])."\">{$to_username}</a></div>");
 		}
 
