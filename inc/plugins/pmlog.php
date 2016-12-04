@@ -101,6 +101,22 @@ function pmlog_admin_adminlog($plugin_array)
 	global $lang;
 	$lang->load("tools_pmlog");
 
+	if($plugin_array['lang_string'] == admin_log_tools_pmlog_prune)
+	{
+		if($plugin_array['logitem']['data'][1] && !$plugin_array['logitem']['data'][2] && !$plugin_array['logitem']['data'][3] && !$plugin_array['logitem']['data'][4])
+		{
+			$plugin_array['lang_string'] = admin_log_tools_pmlog_prune_from;
+		}
+		elseif($plugin_array['logitem']['data'][2] && !$plugin_array['logitem']['data'][1] && !$plugin_array['logitem']['data'][3] && !$plugin_array['logitem']['data'][4])
+		{
+			$plugin_array['lang_string'] = admin_log_tools_pmlog_prune_to;
+		}
+		elseif($plugin_array['logitem']['data'][1] && $plugin_array['logitem']['data'][2] && !$plugin_array['logitem']['data'][3] && !$plugin_array['logitem']['data'][4])
+		{
+			$plugin_array['lang_string'] = admin_log_tools_pmlog_prune_from_to;
+		}
+	}
+
 	return $plugin_array;
 }
 

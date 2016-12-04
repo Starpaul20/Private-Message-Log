@@ -12,6 +12,18 @@ if(!defined("IN_MYBB"))
 
 $page->add_breadcrumb_item($lang->private_message_log, "index.php?module=tools-pmlog");
 
+$sub_tabs['pm_logs'] = array(
+	'title' => $lang->private_message_log,
+	'link' => "index.php?module=tools-pmlog",
+	'description' => $lang->private_message_log_desc
+);
+
+$sub_tabs['prune_pm_logs'] = array(
+	'title' => $lang->prune_private_messages,
+	'link' => "index.php?module=tools-pmlog&amp;action=prune",
+	'description' => $lang->prune_private_messages_desc
+);
+
 if($mybb->input['action'] == "view")
 {
 	$query = $db->query("
@@ -156,6 +168,149 @@ blockquote cite span.highlight {
 exit;
 }
 
+if($mybb->input['action'] == "prune")
+{
+	if($mybb->request_method == 'post')
+	{
+		$mybb->input['older_than'] = $mybb->get_input('older_than', MyBB::INPUT_INT);
+		$where = 'dateline < '.(TIME_NOW-($mybb->input['older_than']*86400));
+
+		// Searching for entries sent by a particular user
+		if($mybb->input['fromid'])
+		{
+			$where .= " AND fromid='".$mybb->get_input('fromid', MyBB::INPUT_INT)."'";
+		}
+
+		// Searching for entries received by a particular user
+		if($mybb->input['toid'])
+		{
+			$where .= " AND toid='".$mybb->get_input('toid', MyBB::INPUT_INT)."'";
+		}
+
+		// Searching for entries in a specific folder
+		if($mybb->input['folder'] > 0)
+		{
+			$folder = $mybb->get_input('folder', MyBB::INPUT_INT);
+
+			if($folder == 5)
+			{
+				$where .= " AND folder > 4";
+			}
+			else
+			{
+				$where .= " AND folder='{$folder}'";
+			}
+		}
+
+		// Searching for entries with a specific read status
+		if($mybb->input['status'])
+		{
+			$status = $mybb->get_input('status', MyBB::INPUT_INT);
+
+			if($status == 1)
+			{
+				$where .= " AND status >= 1";
+			}
+			elseif($status == 0)
+			{
+				$where .= " AND status='0'";
+			}
+		}
+
+		$db->delete_query("privatemessages", $where);
+		$num_deleted = $db->affected_rows();
+
+		// If pruned, recount PMs
+		if($mybb->input['fromid'])
+		{
+			$fromid = $mybb->get_input('fromid', MyBB::INPUT_INT);
+			update_pm_count($fromid);
+		}
+
+		if($mybb->input['toid'])
+		{
+			$toid = $mybb->get_input('toid', MyBB::INPUT_INT);
+			update_pm_count($toid);
+		}
+
+		// Log admin action
+		log_admin_action($mybb->input['older_than'], $mybb->input['fromid'], $mybb->input['toid'], $mybb->input['folder'], $mybb->input['status'], $num_deleted);
+
+		flash_message($lang->success_pruned_private_messages, 'success');
+		admin_redirect("index.php?module=tools-pmlog");
+	}
+
+	$page->add_breadcrumb_item($lang->prune_private_messages, "index.php?module=tools-pmlog&amp;action=prune");
+	$page->output_header($lang->prune_private_messages);
+	$page->output_nav_tabs($sub_tabs, 'prune_pm_logs');
+
+	// Fetch filter options
+	$sortbysel[$mybb->input['sortby']] = 'selected="selected"';
+	$ordersel[$mybb->input['order']] = 'selected="selected"';
+
+	$from_options[''] = $lang->all_users;
+	$from_options['0'] = '----------';
+
+	$query = $db->query("
+		SELECT DISTINCT p.fromid, u.username
+		FROM ".TABLE_PREFIX."privatemessages p
+		LEFT JOIN ".TABLE_PREFIX."users u ON (p.fromid=u.uid)
+		ORDER BY u.username ASC
+	");
+	while($user = $db->fetch_array($query))
+	{
+		$from_options[$user['fromid']] = htmlspecialchars_uni($user['username']);
+	}
+
+	$to_options[''] = $lang->all_users;
+	$to_options['0'] = '----------';
+
+	$query = $db->query("
+		SELECT DISTINCT p.toid, u.username
+		FROM ".TABLE_PREFIX."privatemessages p
+		LEFT JOIN ".TABLE_PREFIX."users u ON (p.toid=u.uid)
+		ORDER BY u.username ASC
+	");
+	while($user = $db->fetch_array($query))
+	{
+		$to_options[$user['toid']] = htmlspecialchars_uni($user['username']);
+	}
+
+	$form = new Form("index.php?module=tools-pmlog&amp;action=prune", "post");
+	$form_container = new FormContainer($lang->prune_private_messages);
+	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->input['fromid'], array('id' => 'fromid')), 'fromid');
+	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->input['toid'], array('id' => 'toid')), 'toid');
+
+	$user_folder = array(
+		"1" => $lang->inbox,
+		"2" => $lang->sent_items,
+		"3" => $lang->drafts,
+		"4" => $lang->trash_can,
+		"5" => $lang->other,
+	);
+
+	$form_container->output_row($lang->in_folder, "", $form->generate_select_box('folder', $user_folder, $mybb->input['folder'], array('id' => 'folder')), 'folder');
+
+	$read_options = array(
+		$form->generate_radio_button("status", "0", $lang->unread_only, array("id" => "status_unread")),
+		$form->generate_radio_button("status", "1", $lang->read_only, array("id" => "status_read")),
+		$form->generate_radio_button("status", "2", $lang->both, array("id" => "status_both"))
+	);
+	$form_container->output_row($lang->read_status, "", implode("<br />", $read_options));
+
+	if(!$mybb->input['older_than'])
+	{
+		$mybb->input['older_than'] = '60';
+	}
+	$form_container->output_row($lang->date_range, "", $lang->older_than.$form->generate_numeric_field('older_than', $mybb->input['older_than'], array('id' => 'older_than', 'style' => 'width: 50px', 'min' => 0)).' '.$lang->days, 'older_than');
+	$form_container->end();
+	$buttons[] = $form->generate_submit_button($lang->prune_private_messages);
+	$form->output_submit_wrapper($buttons);
+	$form->end();
+
+	$page->output_footer();
+}
+
 if(!$mybb->input['action'])
 {	
 	if(!$mybb->settings['threadsperpage'] || (int)$mybb->settings['threadsperpage'] < 1)
@@ -261,13 +416,7 @@ if(!$mybb->input['action'])
 
 	$page->output_header($lang->private_message_log);
 
-	$sub_tabs['pmlogs'] = array(
-		'title' => $lang->private_message_log,
-		'link' => "index.php?module=tools-pmlog",
-		'description' => $lang->private_message_log_desc
-	);
-
-	$page->output_nav_tabs($sub_tabs, 'pmlogs');
+	$page->output_nav_tabs($sub_tabs, 'pm_logs');
 
 	$table = new Table;
 	$table->construct_header($lang->subject, array("colspan" => 2));

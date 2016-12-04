@@ -12,6 +12,10 @@ $l['private_message_logging'] = "Any messages sent through this form will be log
 
 // Admin Log logging
 $l['admin_log_tools_pmlog_view'] = "Viewed PM #{1} sent by User #{3} ({2})";
+$l['admin_log_tools_pmlog_prune'] = "Pruned {6} private messages older than {1} days";
+$l['admin_log_tools_pmlog_prune_from'] = "Pruned {6} private messages older than {1} days sent by user #{2}";
+$l['admin_log_tools_pmlog_prune_to'] = "Pruned {6} private messages older than {1} days received by user #{3}";
+$l['admin_log_tools_pmlog_prune_from_to'] = "Pruned {6} private messages older than {1} days sent by user #{2} and received by user #{3}";
 
 // Admin Permissions
 $l['can_manage_pm_logs'] = "Can manage private message logs?";
@@ -19,6 +23,20 @@ $l['can_manage_pm_logs'] = "Can manage private message logs?";
 // PM Log
 $l['private_message_log'] = "Private Message Log";
 $l['private_message_log_desc'] = "Here you can view and search private messages sent.";
+$l['prune_private_messages'] = "Prune Private Messages";
+$l['prune_private_messages_desc'] = "Here you can prune private messages matching a specified criteria.";
+
+$l['all_users'] = "All Users";
+$l['from_user'] = "From User:";
+$l['to_user'] = "To User:";
+$l['date_range'] = "Date range:";
+$l['older_than'] = "Older than ";
+$l['days'] = "days";
+$l['in_folder'] = "In Folder:";
+$l['read_status'] = "Read Status:";
+$l['unread_only'] = "Unread Only";
+$l['read_only'] = "Read Only";
+$l['both'] = "Both";
 
 $l['subject'] = "Subject";
 $l['from'] = "From";
