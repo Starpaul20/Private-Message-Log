@@ -168,6 +168,25 @@ blockquote cite span.highlight {
 exit;
 }
 
+if($mybb->input['action'] == "delete" && $mybb->request_method == "post")
+{
+	if(is_array($mybb->input['log']))
+	{
+		$log_ids = implode(",", array_map("intval", $mybb->input['log']));
+		if($log_ids)
+		{
+			$db->delete_query("privatemessages", "pmid IN ({$log_ids})");
+			$num_deleted = $db->affected_rows();
+		}
+
+		// Log admin action
+		log_admin_action($num_deleted);
+	}
+
+	flash_message($lang->success_pruned_private_messages, 'success');
+	admin_redirect("index.php?module=tools-pmlog");
+}
+
 if($mybb->input['action'] == "prune")
 {
 	if($mybb->request_method == 'post')
@@ -418,7 +437,10 @@ if(!$mybb->input['action'])
 
 	$page->output_nav_tabs($sub_tabs, 'pm_logs');
 
+	$form = new Form("index.php?module=tools-pmlog&amp;action=delete", "post");
+
 	$table = new Table;
+	$table->construct_header($form->generate_check_box("allbox", 1, '', array('class' => 'checkall')));
 	$table->construct_header($lang->subject, array("colspan" => 2));
 	$table->construct_header($lang->from, array("class" => "align_center", "width" => "20%"));
 	$table->construct_header($lang->to, array("class" => "align_center", "width" => "20%"));
@@ -436,6 +458,7 @@ if(!$mybb->input['action'])
 	");
 	while($log = $db->fetch_array($query))
 	{
+		$table->construct_cell($form->generate_check_box("log[{$log['pmid']}]", $log['pmid'], ''), array("width" => 1));
 		$log['subject'] = htmlspecialchars_uni($log['subject']);
 		$log['dateline'] = date($mybb->settings['dateformat'], $log['dateline']).", ".date($mybb->settings['timeformat'], $log['dateline']);
 
@@ -502,14 +525,18 @@ if(!$mybb->input['action'])
 
 	if($table->num_rows() == 0)
 	{
-		$table->construct_cell($lang->no_logs, array("colspan" => "6"));
+		$table->construct_cell($lang->no_logs, array("colspan" => "7"));
 		$table->construct_row();
 		$table->output($lang->private_message_log);
 	}
 	else
 	{
 		$table->output($lang->private_message_log);
+		$buttons[] = $form->generate_submit_button($lang->delete_selected, array('onclick' => "return confirm('{$lang->confirm_delete_pms}');"));
+		$form->output_submit_wrapper($buttons);
 	}
+
+	$form->end();
 
 	$query = $db->simple_select("privatemessages p", "COUNT(p.pmid) as logs", "1=1 {$additional_sql_criteria}");
 	$total_rows = $db->fetch_field($query, "logs");
@@ -600,6 +627,7 @@ if(!$mybb->input['action'])
 	// -->
 	</script>';
 
+	$buttons = array();
 	$buttons[] = $form->generate_submit_button($lang->filter_private_message_log);
 	$form->output_submit_wrapper($buttons);
 	$form->end();

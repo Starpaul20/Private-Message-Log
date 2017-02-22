@@ -16,6 +16,7 @@ $l['admin_log_tools_pmlog_prune'] = "Pruned {6} private messages older than {1} 
 $l['admin_log_tools_pmlog_prune_from'] = "Pruned {6} private messages older than {1} days sent by user #{2}";
 $l['admin_log_tools_pmlog_prune_to'] = "Pruned {6} private messages older than {1} days received by user #{3}";
 $l['admin_log_tools_pmlog_prune_from_to'] = "Pruned {6} private messages older than {1} days sent by user #{2} and received by user #{3}";
+$l['admin_log_tools_pmlog_delete'] = "Deleted {1} private messages";
 
 // Admin Permissions
 $l['can_manage_pm_logs'] = "Can manage private message logs?";
@@ -52,6 +53,10 @@ $l['new_pm'] = "New PM";
 $l['old_pm'] = "Old PM";
 $l['reply_pm'] = "Replied PM";
 $l['fwd_pm'] = "Forwarded PM";
+
+$l['delete_selected'] = "Delete Selected";
+$l['confirm_delete_pms'] = "Delete the selected private messages?";
+$l['success_pruned_private_messages'] = "The selected private messages have been deleted.";
 
 $l['filter_private_message_log'] = "Filter Private Message Log";
 $l['subject_contains'] = "Subject contains";
