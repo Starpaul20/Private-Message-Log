@@ -119,5 +119,3 @@ function pmlog_admin_adminlog($plugin_array)
 
 	return $plugin_array;
 }
-
-?>
