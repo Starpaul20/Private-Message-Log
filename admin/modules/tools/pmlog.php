@@ -46,7 +46,7 @@ if($mybb->input['action'] == "view")
 	$log['to_username'] = htmlspecialchars_uni($log['to_username']);
 	$log['from_username'] = htmlspecialchars_uni($log['from_username']);
 	$log['subject'] = htmlspecialchars_uni($log['subject']);
-	$log['dateline'] = date($mybb->settings['dateformat'], $log['dateline']).", ".date($mybb->settings['timeformat'], $log['dateline']);
+	$log['dateline'] = my_date('relative', $log['dateline']);
 
 	if(empty($log['ipaddress']))
 	{
@@ -460,7 +460,7 @@ if(!$mybb->input['action'])
 	{
 		$table->construct_cell($form->generate_check_box("log[{$log['pmid']}]", $log['pmid'], ''), array("width" => 1));
 		$log['subject'] = htmlspecialchars_uni($log['subject']);
-		$log['dateline'] = date($mybb->settings['dateformat'], $log['dateline']).", ".date($mybb->settings['timeformat'], $log['dateline']);
+		$log['dateline'] = my_date('relative', $log['dateline']);
 
 		$msg_alt = $folder = '';
 		// Determine Folder Icon
