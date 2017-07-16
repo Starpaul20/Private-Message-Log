@@ -392,12 +392,15 @@ if(!$mybb->input['action'])
 	{
 		$query = $db->simple_select("users", "uid, username", "uid='{$fromid}'");
 		$user = $db->fetch_array($query);
+		$from_name = $user['username'];
+
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
 		$additional_criteria[] = "fromid={$fromid}";
 	}
 	else if($mybb->input['fromname'])
 	{
 		$user = get_user_by_username($mybb->input['fromname'], array('fields' => 'uid, username'));
+		$from_name = $user['username'];
 
 		if(!$user['uid'])
 		{
@@ -412,12 +415,15 @@ if(!$mybb->input['action'])
 	{
 		$query = $db->simple_select("users", "uid, username", "uid='{$toid}'");
 		$user = $db->fetch_array($query);
+		$to_name = $user['username'];
+
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
 		$additional_criteria[] = "toid={$toid}";
 	}
 	else if($mybb->input['toname'])
 	{
 		$user = get_user_by_username($mybb->input['toname'], array('fields' => 'uid, username'));
+		$to_name = $user['username'];
 
 		if(!$user['uid'])
 		{
@@ -556,8 +562,8 @@ if(!$mybb->input['action'])
 
 	$form_container->output_row($lang->folder, "", $form->generate_select_box('folder', $user_folder, $mybb->input['folder'], array('id' => 'folder')), 'folder');	
 	$form_container->output_row($lang->subject_contains, "", $form->generate_text_box('subject', $mybb->input['subject'], array('id' => 'subject')), 'subject');	
-	$form_container->output_row($lang->from_username, "", $form->generate_text_box('fromname', $mybb->input['fromname'], array('id' => 'fromname')), 'fromname');
-	$form_container->output_row($lang->to_username, "", $form->generate_text_box('toname', $mybb->input['toname'], array('id' => 'toname')), 'toname');
+	$form_container->output_row($lang->from_username, "", $form->generate_text_box('fromname', htmlspecialchars_uni($from_name), array('id' => 'fromname')), 'fromname');
+	$form_container->output_row($lang->to_username, "", $form->generate_text_box('toname', htmlspecialchars_uni($to_name), array('id' => 'toname')), 'toname');
 	$form_container->end();
 
 	// Autocompletion for usernames
