@@ -43,8 +43,38 @@ if($mybb->input['action'] == "view")
 	require_once MYBB_ROOT."inc/class_parser.php";
 	$parser = new postParser;
 
-	$log['to_username'] = htmlspecialchars_uni($log['to_username']);
-	$log['from_username'] = htmlspecialchars_uni($log['from_username']);
+	if(!$log['to_username'])
+	{
+		if($log['toid'] == 0)
+		{
+			$log['to_username'] = htmlspecialchars_uni($lang->mybb_engine);
+		}
+		else
+		{
+			$log['to_username'] = htmlspecialchars_uni($lang->na_deleted);
+		}
+	}
+	else
+	{
+		$log['to_username'] = htmlspecialchars_uni($log['to_username']);
+	}
+
+	if(!$log['from_username'])
+	{
+		if($log['fromid'] == 0)
+		{
+			$log['from_username'] = htmlspecialchars_uni($lang->mybb_engine);
+		}
+		else
+		{
+			$log['from_username'] = htmlspecialchars_uni($lang->na_deleted);
+		}
+	}
+	else
+	{
+		$log['from_username'] = htmlspecialchars_uni($log['from_username']);
+	}
+
 	$log['subject'] = htmlspecialchars_uni($log['subject']);
 	$log['dateline'] = my_date('relative', $log['dateline']);
 
@@ -268,7 +298,7 @@ if($mybb->input['action'] == "prune")
 	$ordersel[$mybb->input['order']] = 'selected="selected"';
 
 	$from_options[''] = $lang->all_users;
-	$from_options['0'] = '----------';
+	$from_options['-1'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.fromid, u.username
@@ -278,11 +308,24 @@ if($mybb->input['action'] == "prune")
 	");
 	while($user = $db->fetch_array($query))
 	{
+		// MyBB Engine / Deleted Users
+		if(!$user['username'])
+		{
+			if($user['fromid'] == 0)
+			{
+				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+			}
+			else
+			{
+				$user['username'] = htmlspecialchars_uni($lang->na_deleted);
+			}
+		}
+
 		$from_options[$user['fromid']] = htmlspecialchars_uni($user['username']);
 	}
 
 	$to_options[''] = $lang->all_users;
-	$to_options['0'] = '----------';
+	$to_options['-1'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.toid, u.username
@@ -292,6 +335,19 @@ if($mybb->input['action'] == "prune")
 	");
 	while($user = $db->fetch_array($query))
 	{
+		// MyBB Engine / Deleted Users
+		if(!$user['username'])
+		{
+			if($user['toid'] == 0)
+			{
+				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+			}
+			else
+			{
+				$user['username'] = htmlspecialchars_uni($lang->na_deleted);
+			}
+		}
+
 		$to_options[$user['toid']] = htmlspecialchars_uni($user['username']);
 	}
 
@@ -496,7 +552,14 @@ if(!$mybb->input['action'])
 		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
 		if(!$log['from_username'])
 		{
-			$table->construct_cell("{$find_from}<div>{$lang->deleted_user}</div>");
+			if($log['fromid'] == 0)
+			{
+				$table->construct_cell("{$find_from}<div>{$lang->mybb_engine}</div>");
+			}
+			else
+			{
+				$table->construct_cell("{$find_from}<div>{$lang->na_deleted}</div>");
+			}
 		}
 		else
 		{
@@ -506,7 +569,14 @@ if(!$mybb->input['action'])
 		$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
 		if(!$log['to_username'])
 		{
-			$table->construct_cell("{$find_to}<div>{$lang->deleted_user}</div>");
+			if($log['toid'] == 0)
+			{
+				$table->construct_cell("{$find_to}<div>{$lang->mybb_engine}</div>");
+			}
+			else
+			{
+				$table->construct_cell("{$find_to}<div>{$lang->na_deleted}</div>");
+			}
 		}
 		else
 		{

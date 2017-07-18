@@ -48,7 +48,6 @@ $l['ip_address'] = "IP Address";
 $l['find_pms_by_user'] = "Find all private messages sent by this user";
 $l['find_pms_to_user'] = "Find all private messages sent to this user";
 $l['find'] = "Find";
-$l['deleted_user'] = "Deleted User";
 $l['new_pm'] = "New PM";
 $l['old_pm'] = "Old PM";
 $l['reply_pm'] = "Replied PM";
@@ -80,4 +79,5 @@ $l['subject'] = "Subject";
 $l['date'] = "Date";
 $l['private_message'] = "Private Message";
 
+$l['na_deleted'] = "N/A - Been Deleted";
 $l['search_for_a_user'] = "Search for a user"; // Needed to matain compatibility with pre-1.8.5 versions of MyBB
