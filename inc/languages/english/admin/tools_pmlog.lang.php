@@ -59,8 +59,6 @@ $l['success_pruned_private_messages'] = "The selected private messages have been
 
 $l['filter_private_message_log'] = "Filter Private Message Log";
 $l['subject_contains'] = "Subject contains";
-$l['from_username'] = "From User";
-$l['to_username'] = "To User";
 $l['folder'] = "Folder";
 $l['inbox'] = "Inbox";
 $l['sent_items'] = "Sent Items";

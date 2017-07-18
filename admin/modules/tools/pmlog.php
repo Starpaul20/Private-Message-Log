@@ -448,46 +448,18 @@ if(!$mybb->input['action'])
 	{
 		$query = $db->simple_select("users", "uid, username", "uid='{$fromid}'");
 		$user = $db->fetch_array($query);
-		$from_name = $user['username'];
 
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
 		$additional_criteria[] = "fromid={$fromid}";
-	}
-	else if($mybb->input['fromname'])
-	{
-		$user = get_user_by_username($mybb->input['fromname'], array('fields' => 'uid, username'));
-		$from_name = $user['username'];
-
-		if(!$user['uid'])
-		{
-			flash_message($lang->error_invalid_user, 'error');
-			admin_redirect("index.php?module=tools-pmlog");
-		}
-		$additional_sql_criteria .= "AND p.fromid='{$user['uid']}'";
-		$additional_criteria[] = "fromid={$user['uid']}";
 	}
 
 	if($mybb->input['toid'])
 	{
 		$query = $db->simple_select("users", "uid, username", "uid='{$toid}'");
 		$user = $db->fetch_array($query);
-		$to_name = $user['username'];
 
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
 		$additional_criteria[] = "toid={$toid}";
-	}
-	else if($mybb->input['toname'])
-	{
-		$user = get_user_by_username($mybb->input['toname'], array('fields' => 'uid, username'));
-		$to_name = $user['username'];
-
-		if(!$user['uid'])
-		{
-			flash_message($lang->error_invalid_user, 'error');
-			admin_redirect("index.php?module=tools-pmlog");
-		}
-		$additional_sql_criteria .= "AND p.toid='{$user['uid']}'";
-		$additional_criteria[] = "toid='{$user['uid']}'";
 	}
 
 	if($additional_criteria)
@@ -630,78 +602,65 @@ if(!$mybb->input['action'])
 		"5" => $lang->other,
 	);
 
+	$from_options[''] = $lang->all_users;
+	$from_options['-1'] = '----------';
+
+	$query = $db->query("
+		SELECT DISTINCT p.fromid, u.username
+		FROM ".TABLE_PREFIX."privatemessages p
+		LEFT JOIN ".TABLE_PREFIX."users u ON (p.fromid=u.uid)
+		ORDER BY u.username ASC
+	");
+	while($user = $db->fetch_array($query))
+	{
+		// MyBB Engine / Deleted Users
+		if(!$user['username'])
+		{
+			if($user['fromid'] == 0)
+			{
+				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+			}
+			else
+			{
+				$user['username'] = htmlspecialchars_uni($lang->na_deleted);
+			}
+		}
+
+		$from_options[$user['fromid']] = htmlspecialchars_uni($user['username']);
+	}
+
+	$to_options[''] = $lang->all_users;
+	$to_options['-1'] = '----------';
+
+	$query = $db->query("
+		SELECT DISTINCT p.toid, u.username
+		FROM ".TABLE_PREFIX."privatemessages p
+		LEFT JOIN ".TABLE_PREFIX."users u ON (p.toid=u.uid)
+		ORDER BY u.username ASC
+	");
+	while($user = $db->fetch_array($query))
+	{
+		// MyBB Engine / Deleted Users
+		if(!$user['username'])
+		{
+			if($user['toid'] == 0)
+			{
+				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+			}
+			else
+			{
+				$user['username'] = htmlspecialchars_uni($lang->na_deleted);
+			}
+		}
+
+		$to_options[$user['toid']] = htmlspecialchars_uni($user['username']);
+	}
+
 	$form_container->output_row($lang->folder, "", $form->generate_select_box('folder', $user_folder, $mybb->input['folder'], array('id' => 'folder')), 'folder');	
 	$form_container->output_row($lang->subject_contains, "", $form->generate_text_box('subject', $mybb->input['subject'], array('id' => 'subject')), 'subject');	
-	$form_container->output_row($lang->from_username, "", $form->generate_text_box('fromname', htmlspecialchars_uni($from_name), array('id' => 'fromname')), 'fromname');
-	$form_container->output_row($lang->to_username, "", $form->generate_text_box('toname', htmlspecialchars_uni($to_name), array('id' => 'toname')), 'toname');
+	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->input['fromid'], array('id' => 'fromid')), 'fromid');
+	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->input['toid'], array('id' => 'toid')), 'toid');
 	$form_container->end();
-
-	// Autocompletion for usernames
-	echo '
-	<link rel="stylesheet" href="../jscripts/select2/select2.css">
-	<script type="text/javascript" src="../jscripts/select2/select2.min.js?ver=1804"></script>
-	<script type="text/javascript">
-	<!--
-	$("#fromname").select2({
-		placeholder: "'.$lang->search_for_a_user.'",
-		minimumInputLength: 2,
-		multiple: false,
-		ajax: { // instead of writing the function to execute the request we use Select2\'s convenient helper
-			url: "../xmlhttp.php?action=get_users",
-			dataType: \'json\',
-			data: function (term, page) {
-				return {
-					query: term // search term
-				};
-			},
-			results: function (data, page) { // parse the results into the format expected by Select2.
-				// since we are using custom formatting functions we do not need to alter remote JSON data
-				return {results: data};
-			}
-		},
-		initSelection: function(element, callback) {
-			var query = $(element).val();
-			if (query !== "") {
-				$.ajax("../xmlhttp.php?action=get_users&getone=1", {
-					data: {
-						query: query
-					},
-					dataType: "json"
-				}).done(function(data) { callback(data); });
-			}
-		}
-	});
-	$("#toname").select2({
-		placeholder: "'.$lang->search_for_a_user.'",
-		minimumInputLength: 2,
-		multiple: false,
-		ajax: { // instead of writing the function to execute the request we use Select2\'s convenient helper
-			url: "../xmlhttp.php?action=get_users",
-			dataType: \'json\',
-			data: function (term, page) {
-				return {
-					query: term // search term
-				};
-			},
-			results: function (data, page) { // parse the results into the format expected by Select2.
-				// since we are using custom formatting functions we do not need to alter remote JSON data
-				return {results: data};
-			}
-		},
-		initSelection: function(element, callback) {
-			var query = $(element).val();
-			if (query !== "") {
-				$.ajax("../xmlhttp.php?action=get_users&getone=1", {
-					data: {
-						query: query
-					},
-					dataType: "json"
-				}).done(function(data) { callback(data); });
-			}
-		}
-	});
-	// -->
-	</script>';
 
 	$buttons = array();
 	$buttons[] = $form->generate_submit_button($lang->filter_private_message_log);
