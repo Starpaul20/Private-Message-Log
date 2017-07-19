@@ -298,7 +298,7 @@ if($mybb->input['action'] == "prune")
 	$ordersel[$mybb->input['order']] = 'selected="selected"';
 
 	$from_options[''] = $lang->all_users;
-	$from_options['-1'] = '----------';
+	$from_options['0'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.fromid, u.username
@@ -313,7 +313,7 @@ if($mybb->input['action'] == "prune")
 		{
 			if($user['fromid'] == 0)
 			{
-				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+				continue;
 			}
 			else
 			{
@@ -325,7 +325,7 @@ if($mybb->input['action'] == "prune")
 	}
 
 	$to_options[''] = $lang->all_users;
-	$to_options['-1'] = '----------';
+	$to_options['0'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.toid, u.username
@@ -340,7 +340,7 @@ if($mybb->input['action'] == "prune")
 		{
 			if($user['toid'] == 0)
 			{
-				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+				continue;
 			}
 			else
 			{
@@ -446,18 +446,12 @@ if(!$mybb->input['action'])
 
 	if($mybb->input['fromid'])
 	{
-		$query = $db->simple_select("users", "uid, username", "uid='{$fromid}'");
-		$user = $db->fetch_array($query);
-
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
 		$additional_criteria[] = "fromid={$fromid}";
 	}
 
 	if($mybb->input['toid'])
 	{
-		$query = $db->simple_select("users", "uid, username", "uid='{$toid}'");
-		$user = $db->fetch_array($query);
-
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
 		$additional_criteria[] = "toid={$toid}";
 	}
@@ -521,7 +515,11 @@ if(!$mybb->input['action'])
 
 		$table->construct_cell("<img src=\"../images/{$folder}\" alt=\"{$msg_alt}\" title=\"{$msg_alt}\" />", array("width" => 1));
 		$table->construct_cell("<a href=\"javascript:MyBB.popupWindow('index.php?module=tools-pmlog&amp;action=view&amp;pmid={$log['pmid']}', null, true);\">{$log['subject']}</a>");
-		$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
+
+		if($log['fromid'] > 0)
+		{
+			$find_from = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;fromid={$log['fromid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_by_user}\" alt=\"{$lang->find}\" /></a></div>";
+		}
 		if(!$log['from_username'])
 		{
 			if($log['fromid'] == 0)
@@ -538,7 +536,11 @@ if(!$mybb->input['action'])
 			$from_username = format_name(htmlspecialchars_uni($log['from_username']), $log['from_usergroup'], $log['from_displaygroup']);
 			$table->construct_cell("{$find_from}<div><a href=\"../".get_profile_link($log['fromid'])."\">{$from_username}</a></div>");
 		}
-		$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
+
+		if($log['toid'] > 0)
+		{
+			$find_to = "<div class=\"float_right\"><a href=\"index.php?module=tools-pmlog&amp;toid={$log['toid']}\"><img src=\"styles/{$page->style}/images/icons/find.png\" title=\"{$lang->find_pms_to_user}\" alt=\"{$lang->find}\" /></a></div>"; 
+		}
 		if(!$log['to_username'])
 		{
 			if($log['toid'] == 0)
@@ -603,7 +605,7 @@ if(!$mybb->input['action'])
 	);
 
 	$from_options[''] = $lang->all_users;
-	$from_options['-1'] = '----------';
+	$from_options['0'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.fromid, u.username
@@ -618,7 +620,7 @@ if(!$mybb->input['action'])
 		{
 			if($user['fromid'] == 0)
 			{
-				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+				continue;
 			}
 			else
 			{
@@ -630,7 +632,7 @@ if(!$mybb->input['action'])
 	}
 
 	$to_options[''] = $lang->all_users;
-	$to_options['-1'] = '----------';
+	$to_options['0'] = '----------';
 
 	$query = $db->query("
 		SELECT DISTINCT p.toid, u.username
@@ -645,7 +647,7 @@ if(!$mybb->input['action'])
 		{
 			if($user['toid'] == 0)
 			{
-				$user['username'] = htmlspecialchars_uni($lang->mybb_engine);
+				continue;
 			}
 			else
 			{
