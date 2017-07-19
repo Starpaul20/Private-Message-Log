@@ -30,7 +30,7 @@ function pmlog_info()
 		"website"			=> "http://galaxiesrealm.com/index.php",
 		"author"			=> "Starpaul20",
 		"authorsite"		=> "http://galaxiesrealm.com/index.php",
-		"version"			=> "1.2",
+		"version"			=> "1.3",
 		"codename"			=> "pmlog",
 		"compatibility"		=> "18*"
 	);

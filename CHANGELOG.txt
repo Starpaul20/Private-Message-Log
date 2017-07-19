@@ -1,3 +1,9 @@
+1.3 (July 19th, 2017)
+- Removed PHP closing tags
+- Use relative time for dateline
+- Changed username input to select box
+- Handle display of deleted users/MyBB Engine in log
+
 1.2 (March 9th, 2017)
 - Ability to prune Private Messages (Issue #6)
 - Updated username autocompletion (Issue #5)
