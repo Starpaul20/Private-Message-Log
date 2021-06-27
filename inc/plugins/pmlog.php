@@ -41,7 +41,7 @@ function pmlog_activate()
 {
 	global $db;
 
-	include MYBB_ROOT."/inc/adminfunctions_templates.php";
+	require_once MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("private_send", "#".preg_quote('{$codebuttons}')."#i", '{$codebuttons}{$message_logging}');
 
 	change_admin_permission('tools', 'pmlog');
@@ -52,7 +52,7 @@ function pmlog_deactivate()
 {
 	global $db;
 
-	include MYBB_ROOT."/inc/adminfunctions_templates.php";
+	require_once MYBB_ROOT."/inc/adminfunctions_templates.php";
 	find_replace_templatesets("private_send", "#".preg_quote('{$message_logging}')."#i", '', 0);
 
 	change_admin_permission('tools', 'pmlog', -1);
