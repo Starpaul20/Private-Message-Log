@@ -87,7 +87,8 @@ if($mybb->input['action'] == "view")
 		$ipaddress = my_inet_ntop($db->unescape_binary($log['ipaddress']));
 	}
 
-	// Parse PM text
+	// Parse PM text (currently disabled due to PHP errors in 7.4+)
+/*
 	$parser_options = array(
 		"allow_html" => $mybb->settings['pmsallowhtml'],
 		"allow_mycode" => $mybb->settings['pmsallowmycode'],
@@ -97,6 +98,8 @@ if($mybb->input['action'] == "view")
 		"nl2br" => 1
 	);
 	$log['message'] = $parser->parse_message($log['message'], $parser_options);
+*/
+	$log['message'] = htmlspecialchars_uni($log['message']);
 
 	// Log admin action
 	log_admin_action($log['pmid'], $log['from_username'], $log['fromid']);
@@ -294,8 +297,8 @@ if($mybb->input['action'] == "prune")
 	$page->output_nav_tabs($sub_tabs, 'prune_pm_logs');
 
 	// Fetch filter options
-	$sortbysel[$mybb->input['sortby']] = 'selected="selected"';
-	$ordersel[$mybb->input['order']] = 'selected="selected"';
+	$sortbysel[$mybb->get_input('sortby')] = 'selected="selected"';
+	$ordersel[$mybb->get_input('order')] = 'selected="selected"';
 
 	$from_options[''] = $lang->all_users;
 	$from_options['0'] = '----------';
@@ -353,8 +356,8 @@ if($mybb->input['action'] == "prune")
 
 	$form = new Form("index.php?module=tools-pmlog&amp;action=prune", "post");
 	$form_container = new FormContainer($lang->prune_private_messages);
-	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->input['fromid'], array('id' => 'fromid')), 'fromid');
-	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->input['toid'], array('id' => 'toid')), 'toid');
+	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->get_input('fromid'), array('id' => 'fromid')), 'fromid');
+	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->get_input('toid'), array('id' => 'toid')), 'toid');
 
 	$user_folder = array(
 		"1" => $lang->inbox,
@@ -364,7 +367,7 @@ if($mybb->input['action'] == "prune")
 		"5" => $lang->other,
 	);
 
-	$form_container->output_row($lang->in_folder, "", $form->generate_select_box('folder', $user_folder, $mybb->input['folder'], array('id' => 'folder')), 'folder');
+	$form_container->output_row($lang->in_folder, "", $form->generate_select_box('folder', $user_folder, $mybb->get_input('folder'), array('id' => 'folder')), 'folder');
 
 	$read_options = array(
 		$form->generate_radio_button("status", "0", $lang->unread_only, array("id" => "status_unread")),
@@ -373,11 +376,11 @@ if($mybb->input['action'] == "prune")
 	);
 	$form_container->output_row($lang->read_status, "", implode("<br />", $read_options));
 
-	if(!$mybb->input['older_than'])
+	if(!$mybb->get_input('older_than'))
 	{
 		$mybb->input['older_than'] = '60';
 	}
-	$form_container->output_row($lang->date_range, "", $lang->older_than.$form->generate_numeric_field('older_than', $mybb->input['older_than'], array('id' => 'older_than', 'style' => 'width: 50px', 'min' => 0)).' '.$lang->days, 'older_than');
+	$form_container->output_row($lang->date_range, "", $lang->older_than.$form->generate_numeric_field('older_than', $mybb->get_input('older_than'), array('id' => 'older_than', 'style' => 'width: 50px', 'min' => 0)).' '.$lang->days, 'older_than');
 	$form_container->end();
 	$buttons[] = $form->generate_submit_button($lang->prune_private_messages);
 	$form->output_submit_wrapper($buttons);
@@ -400,7 +403,7 @@ if(!$mybb->input['action'])
 		$per_page = 20;
 	}
 
-	if($mybb->input['page'] && $mybb->input['page'] > 1)
+	if(!empty($mybb->input['page']) && $mybb->input['page'] > 1)
 	{
 		$mybb->input['page'] = $mybb->get_input('page', MyBB::INPUT_INT);
 		$start = ($mybb->input['page']*$per_page)-$per_page;
@@ -417,11 +420,13 @@ if(!$mybb->input['action'])
 
 	$fromid = $mybb->get_input('fromid', MyBB::INPUT_INT);
 
-	$subject = $db->escape_string_like($mybb->input['subject']);
+	$subject = $db->escape_string_like($mybb->get_input('subject'));
 
 	$folder = $mybb->get_input('folder', MyBB::INPUT_INT);
 
 	// Begin criteria filtering
+	$additional_sql_criteria = '';
+
 	if(!$folder)
 	{
 		$folder = 1;
@@ -438,19 +443,19 @@ if(!$mybb->input['action'])
 		$additional_criteria[] = "folder={$folder}";
 	}
 
-	if($mybb->input['subject'])
+	if(!empty($mybb->input['subject']))
 	{
 		$additional_sql_criteria .= " AND p.subject LIKE '%{$subject}%'";
 		$additional_criteria[] = "subject=".urlencode($mybb->input['subject']);
 	}
 
-	if($mybb->input['fromid'])
+	if(!empty($mybb->input['fromuid']))
 	{
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
 		$additional_criteria[] = "fromid={$fromid}";
 	}
 
-	if($mybb->input['toid'])
+	if(!empty($mybb->input['touid']))
 	{
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
 		$additional_criteria[] = "toid={$toid}";
@@ -658,10 +663,10 @@ if(!$mybb->input['action'])
 		$to_options[$user['toid']] = htmlspecialchars_uni($user['username']);
 	}
 
-	$form_container->output_row($lang->folder, "", $form->generate_select_box('folder', $user_folder, $mybb->input['folder'], array('id' => 'folder')), 'folder');	
-	$form_container->output_row($lang->subject_contains, "", $form->generate_text_box('subject', $mybb->input['subject'], array('id' => 'subject')), 'subject');	
-	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->input['fromid'], array('id' => 'fromid')), 'fromid');
-	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->input['toid'], array('id' => 'toid')), 'toid');
+	$form_container->output_row($lang->folder, "", $form->generate_select_box('folder', $user_folder, $mybb->get_input('folder'), array('id' => 'folder')), 'folder');	
+	$form_container->output_row($lang->subject_contains, "", $form->generate_text_box('subject', $mybb->get_input('subject'), array('id' => 'subject')), 'subject');	
+	$form_container->output_row($lang->from_user, "", $form->generate_select_box('fromid', $from_options, $mybb->get_input('fromid'), array('id' => 'fromid')), 'fromid');
+	$form_container->output_row($lang->to_user, "", $form->generate_select_box('toid', $to_options, $mybb->get_input('toid'), array('id' => 'toid')), 'toid');
 	$form_container->end();
 
 	$buttons = array();
