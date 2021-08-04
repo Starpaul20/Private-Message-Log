@@ -449,13 +449,13 @@ if(!$mybb->input['action'])
 		$additional_criteria[] = "subject=".urlencode($mybb->input['subject']);
 	}
 
-	if(!empty($mybb->input['fromuid']))
+	if(!empty($mybb->input['fromid']))
 	{
 		$additional_sql_criteria .= " AND p.fromid='{$fromid}'";
 		$additional_criteria[] = "fromid={$fromid}";
 	}
 
-	if(!empty($mybb->input['touid']))
+	if(!empty($mybb->input['toid']))
 	{
 		$additional_sql_criteria .= " AND p.toid='{$toid}'";
 		$additional_criteria[] = "toid={$toid}";
